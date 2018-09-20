@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HtmlAndCss", "HtmlAndCss", "{20DDE2D8-548A-4EE2-96EB-AB7E7789706E}"
+	ProjectSection(SolutionItems) = preProject
+		01.welcome.html = 01.welcome.html
+		02.headings.html = 02.headings.html
+		03.paragraphs.html = 03.paragraphs.html
+		04.todo.html = 04.todo.html
+		05.hello.html = 05.hello.html
+		06.home.html = 06.home.html
+		07.fruits.html = 07.fruits.html
+		08.receipt.html = 08.receipt.html
+		09.contact.html = 09.contact.html
+		10.Colors.html = 10.Colors.html
+		11.borders.css = 11.borders.css
+		11.Borders.html = 11.Borders.html
+		12.rectangles.css = 12.rectangles.css
+		12.rectangles.html = 12.rectangles.html
+		13.Languages.css = 13.Languages.css
+		13.Languages.html = 13.Languages.html
+		14.contactForm.css = 14.contactForm.css
+		14.contactForm.html = 14.contactForm.html
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40062C81-3154-465F-A4DB-63D2AF8B4650}
+	EndGlobalSection
+EndGlobal

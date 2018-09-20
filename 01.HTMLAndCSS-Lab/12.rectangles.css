@@ -1,0 +1,12 @@
+﻿div{
+    border-radius: 5px;
+    border: dotted blue;
+    padding: 20px;
+}
+div div{
+    border: dashed red;
+}
+
+div div div{
+    border: solid green;
+}
