@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5D5C9D7A-7F20-4651-A962-8C49938B2BC7}"
+	ProjectSection(SolutionItems) = preProject
+		all-beers.html = all-beers.html
+		index.html = index.html
+		login.html = login.html
+		order.html = order.html
+		register.html = register.html
+		template.html = template.html
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6173C824-EF01-455D-BC68-0BF98EA791C2}
+	EndGlobalSection
+EndGlobal
