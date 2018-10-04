@@ -7,12 +7,14 @@
     using HTTP.Requests;
     using HTTP.Responses;
     using HTTP.Enums;
+    using HTTP.Sessions;
+    using HTTP.Cookies;
 
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using System.Text;
     using System;
-    
+
     public class ConnectionHandler
     {
         private readonly Socket client;
@@ -23,6 +25,35 @@
         {
             this.client = client;
             this.serverRoutingTable = serverRoutingTable;
+        }
+
+        private void SetResponseSession(IHttpResponse httpResponse, string sessionId)
+        {
+            if (sessionId != null)
+            {
+                var cookie = new HttpCookie(HttpSessionStorage.SessionCookieKey, $"{sessionId};HttpOnly=true");
+
+                httpResponse.AddCookie(cookie);
+            }
+        }
+
+        private string SetRequestSession(IHttpRequest httpRequest)
+        {
+            string sessionId = null;
+
+            if (httpRequest.Cookies.ContainsCookie(HttpSessionStorage.SessionCookieKey))
+            {
+                var cookie = httpRequest.Cookies.GetCookie(HttpSessionStorage.SessionCookieKey);
+                sessionId = cookie.Value;
+                httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
+            }
+            else
+            {
+                sessionId = Guid.NewGuid().ToString();
+                httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
+            }
+
+            return sessionId;
         }
 
         private async Task<IHttpRequest> ReadRequests()
@@ -80,7 +111,11 @@
 
             if (httpRequest != null)
             {
+                string sessionId = this.SetRequestSession(httpRequest);
+
                 var httpResponse = this.HandleRequest(httpRequest);
+
+                this.SetResponseSession(httpResponse, sessionId);
 
                 await this.PrepareResponse(httpResponse);
             }

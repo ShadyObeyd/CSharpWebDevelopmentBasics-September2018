@@ -6,6 +6,8 @@
     using Headers.Contracts;
     using SIS.HTTP.Common;
     using Extensions;
+    using Cookies;
+    using Cookies.Contracts;
 
     using System.Text;
     using System;
@@ -19,6 +21,7 @@
         public HttpResponse(HttpResponseStatusCode statusCode)
         {
             this.Headers = new HttpHeaderCollection();
+            this.Cookies = new HttpCookieCollection();
             this.Content = new byte[0];
             this.StatusCode = statusCode;
         }
@@ -27,7 +30,14 @@
 
         public IHttpHeaderCollection Headers { get; private set; }
 
+        public IHttpCookieCollection Cookies { get; }
+
         public byte[] Content { get; set; }
+
+        public void AddCookie(HttpCookie cookie)
+        {
+            this.Cookies.Add(cookie);
+        }
 
         public void AddHeader(HttpHeader header)
         {
@@ -51,8 +61,15 @@
             sb.Append($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetResponseLine()}")
               .Append(Environment.NewLine)
               .Append(this.Headers)
-              .Append(Environment.NewLine)
               .Append(Environment.NewLine);
+
+            if (this.Cookies.HasCookies())
+            {
+                sb.Append($"Set-Cookie: {this.Cookies}")
+                  .Append(Environment.NewLine);
+            }
+
+            sb.Append(Environment.NewLine);
 
             return sb.ToString();
         }
