@@ -9,7 +9,6 @@
     public class HttpCookieCollection : IHttpCookieCollection
     {
         private const string CookieNullMessage = "Cookie cannot be null!";
-        private const string CookieIsContainedMessage = "Cannot add existing cookie!";
         private const string CookieParametersNullMessage = "Cookie key and value cannot be null or empty!";
         private const string CookieKeyNullMessage = "Given key cannot be null or empty!";
 
@@ -32,12 +31,10 @@
                 throw new ArgumentException(CookieParametersNullMessage);
             }
 
-            if (cookies.ContainsKey(cookie.Key))
+            if (!this.cookies.ContainsKey(cookie.Key))
             {
-                throw new InvalidOperationException(CookieIsContainedMessage);
+                this.cookies.Add(cookie.Key, cookie);
             }
-
-            this.cookies.Add(cookie.Key, cookie);
         }
 
         public bool ContainsCookie(string key)

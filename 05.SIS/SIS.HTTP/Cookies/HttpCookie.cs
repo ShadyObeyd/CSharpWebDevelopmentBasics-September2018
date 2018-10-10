@@ -10,6 +10,7 @@
         {
             this.Key = key;
             this.Value = value;
+            this.IsNew = true;
             this.Expires = DateTime.UtcNow.AddDays(expires);
         }
 

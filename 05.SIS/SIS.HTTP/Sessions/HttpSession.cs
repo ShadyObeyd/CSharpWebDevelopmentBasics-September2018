@@ -40,12 +40,10 @@
                 throw new ArgumentException(ParameterNullMessage);
             }
 
-            if (this.sessionParameters.ContainsKey(name))
+            if (!this.sessionParameters.ContainsKey(name))
             {
-                throw new InvalidOperationException(SessionIsContainedMessage);
+                this.sessionParameters.Add(name, parameter);
             }
-
-            this.sessionParameters.Add(name, parameter);
         }
 
         public void ClearParameters()
