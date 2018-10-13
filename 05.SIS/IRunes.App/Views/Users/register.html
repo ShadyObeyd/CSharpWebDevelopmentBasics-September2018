@@ -1,29 +1,23 @@
-﻿<!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
-    <title></title>
-</head>
-<body>
-    <h1>IRunes</h1>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    </ul>
-    <hr />
-    <h1>Register</h1>
+﻿<div class="register-form">
+    <h1 class="login-or-register-header">Register</h1>
+    <div class="register-form-center-line"></div>
     <form method="post" action="/Users/register">
-        Username <input type="text" name="username" placeholder="Username..." /><br />
-        Password <input type="password" name="password" placeholder="Password..." /><br />
-        Confirm Password <input type="password" name="confirmPassword" placeholder="Confirm Password..." /><br />
-        Email <input type="email" name="email" placeholder="Email..." /><br />
-        <input type="submit" value="Register" />
+        <label>Username</label><br />
+        <div class="register-form-center">
+            <input class="col-md-6" type="text" name="username" placeholder="Username..." /><br />
+        </div>
+        <label>Password</label><br />
+        <div class="register-form-center">
+            <input class="col-md-6" type="password" name="password" placeholder="Password..." /><br />
+        </div>
+        <label>Confirm Password</label><br />
+        <div class="register-form-center">
+            <input class="col-md-6" type="password" name="confirmPassword" placeholder="Confirm Password..." /><br />
+        </div>
+        <label>Email</label><br />
+        <div class="register-form-center">
+            <input class="col-md-6" type="email" name="email" placeholder="Email..." /><br />
+            <button type="submit" class="btn">Register</button>
+        </div>
     </form>
-    <hr />
-    <footer>
-        <b>Copy Rights &copy; Sanity Design Studios. All rights reserved.</b>
-    </footer>
-</body>
-</html>
+</div>

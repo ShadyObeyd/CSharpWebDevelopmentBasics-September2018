@@ -25,6 +25,10 @@
 
         private const string FileNotFoundMessage = "File with path {0} was not found";
 
+        private const string LayoutFileName = "_layout";
+
+        private const string RenderBodyConstant = "@RenderBody()";
+
         protected IRunesContext Context { get; }
 
         protected IDictionary<string, string> ViewBag { get; set; }
@@ -42,6 +46,8 @@
 
         protected IHttpResponse View([CallerMemberName] string viewName = "")
         {
+            var layoutView = $"{DirectoryPath}{ViewFolderName}/{LayoutFileName}{HtmlFileExtension}";
+
             string filePath = $"{DirectoryPath}{ViewFolderName}/{this.GetControllerName()}/{viewName}{HtmlFileExtension}";
 
             if (!File.Exists(filePath))
@@ -49,19 +55,30 @@
                 throw new FileNotFoundException(string.Format(FileNotFoundMessage, filePath));
             }
 
-            string fileContent = File.ReadAllText(filePath);
+            string viewContent = BuildViewContent(filePath);
+
+            var viewLayout = File.ReadAllText(layoutView);
+
+            var view = viewLayout.Replace(RenderBodyConstant, viewContent);
+
+            var response = new HtmlResult(view, HttpResponseStatusCode.Ok);
+
+            return response;
+        }
+
+        private string BuildViewContent(string filePath)
+        {
+            string viewContent = File.ReadAllText(filePath);
 
             foreach (string viewBagKey in ViewBag.Keys)
             {
-                if (fileContent.Contains($"{{{viewBagKey}}}"))
+                if (viewContent.Contains($"{{{viewBagKey}}}"))
                 {
-                    fileContent = fileContent.Replace($"{{{{{viewBagKey}}}}}", this.ViewBag[viewBagKey]);
+                    viewContent = viewContent.Replace($"{{{{{viewBagKey}}}}}", this.ViewBag[viewBagKey]);
                 }
             }
 
-            var response = new HtmlResult(fileContent, HttpResponseStatusCode.Ok);
-
-            return response;
+            return viewContent;
         }
 
         public void SignInUser(string username, IHttpRequest request)
