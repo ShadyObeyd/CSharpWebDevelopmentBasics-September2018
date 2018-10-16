@@ -19,19 +19,20 @@
     using System.Linq;
     using System.Reflection;
     using System.IO;
+    using SIS.WebServer.Api.Contracts;
 
     public class ConnectionHandler
     {
         private readonly Socket client;
 
-        private readonly ServerRoutingTable serverRoutingTable;
+        private readonly IHttpHandler handler;
 
         private const string DirectoryPath = "../../..";
 
-        public ConnectionHandler(Socket client, ServerRoutingTable serverRoutingTable)
+        public ConnectionHandler(Socket client, IHttpHandler handler)
         {
             this.client = client;
-            this.serverRoutingTable = serverRoutingTable;
+            this.handler = handler;
         }
 
         private void SetResponseSession(IHttpResponse httpResponse, string sessionId)
@@ -94,57 +95,6 @@
             return new HttpRequest(result.ToString());
         }
 
-        private IHttpResponse HandleRequest(IHttpRequest request)
-        {
-            bool isResaurceRequest = this.IsResaurceRequest(request);
-
-            if (isResaurceRequest)
-            {
-                return this.HandleRequestRespons(request.Path);
-            }
-
-            if (!this.serverRoutingTable.Routes.ContainsKey(request.RequestMethod) ||
-                !this.serverRoutingTable.Routes[request.RequestMethod].ContainsKey(request.Path))
-            {
-                return new HttpResponse(HttpResponseStatusCode.NotFound);
-            }
-
-            return this.serverRoutingTable.Routes[request.RequestMethod][request.Path].Invoke(request);
-        }
-
-        private IHttpResponse HandleRequestRespons(string requestPath)
-        {
-            string requestPathExtension = requestPath.Substring(requestPath.LastIndexOf('.'));
-
-            var resourceName = requestPath.Substring(requestPath.LastIndexOf('/'));
-
-            string resourcePath = DirectoryPath + "/Resources" + $"/{requestPathExtension.Substring(1)}" + resourceName;
-
-            if (!File.Exists(resourcePath))
-            {
-                return new HttpResponse(HttpResponseStatusCode.NotFound);
-            }
-
-            var fileContent = File.ReadAllBytes(resourcePath);
-
-            return new InlineResourceResult(fileContent, HttpResponseStatusCode.Ok);
-        }
-
-        private bool IsResaurceRequest(IHttpRequest request)
-        {
-            string requestPath = request.Path;
-
-            if (requestPath.Contains("."))
-            {
-                string requestPathExtension = requestPath.Substring(requestPath.LastIndexOf('.'));
-
-                return GlobalConstants.ResourceExtensions.Contains(requestPathExtension);
-            }
-
-            return false;
-            
-        }
-
         private async Task PrepareResponse(IHttpResponse response)
         {
             byte[] byteSegments = response.GetBytes();
@@ -160,7 +110,7 @@
             {
                 string sessionId = this.SetRequestSession(httpRequest);
 
-                var httpResponse = this.HandleRequest(httpRequest);
+                var httpResponse = this.handler.Handle(httpRequest);
 
                 this.SetResponseSession(httpResponse, sessionId);
 

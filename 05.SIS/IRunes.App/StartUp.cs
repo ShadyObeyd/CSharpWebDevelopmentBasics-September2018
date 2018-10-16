@@ -3,7 +3,9 @@
     using SIS.HTTP.Enums;
     using SIS.WebServer;
     using SIS.WebServer.Routing;
-    
+    using SIS.WebServer.Api.Contracts;
+    using SIS.WebServer.Api;
+
     using Controllers;
 
     public class StartUp
@@ -12,9 +14,11 @@
         {
             ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
 
+            IHttpHandler handler = new HttpHandler(serverRoutingTable);
+
             ConfigureRouting(serverRoutingTable);
 
-            Server server = new Server(8000, serverRoutingTable);
+            Server server = new Server(8000, handler);
 
             server.Run();
         }

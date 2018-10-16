@@ -1,21 +1,17 @@
 ﻿namespace SIS.App
 {
-    using HTTP.Enums;
-
     using WebServer;
-    using WebServer.Routing;
+
+    using Framework.Routes;
+    using Framework;
 
     public class Launcher
     {
         public static void Main()
         {
-            ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
+            Server server = new Server(8000, new ControllerRouter());
 
-            serverRoutingTable.Routes[HttpRequestMethod.Get]["/"] = request => new HomeController().Index();
-
-            Server server = new Server(8000, serverRoutingTable);
-
-            server.Run();
+            MvcEngine.Run(server);
         }
     }
 }
