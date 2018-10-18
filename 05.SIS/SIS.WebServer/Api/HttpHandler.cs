@@ -54,7 +54,6 @@
             }
 
             return false;
-
         }
 
         private IHttpResponse HandleRequestRespons(string requestPath)

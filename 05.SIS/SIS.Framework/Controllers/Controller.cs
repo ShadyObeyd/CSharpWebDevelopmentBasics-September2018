@@ -15,7 +15,7 @@
     {
         protected Controller()
         {
-
+            this.ViewModel = new ViewModel();
         }
 
         public Model ModelState { get; set; } = new Model();
@@ -30,7 +30,7 @@
 
             var fullyQualifiedName = ControllerUtilities.GetViewFullQualifiedName(controllerName, caller);
 
-            var view = new View(fullyQualifiedName);
+            var view = new View(fullyQualifiedName, this.ViewModel.Data);
 
             return new ViewResult(view);
         }

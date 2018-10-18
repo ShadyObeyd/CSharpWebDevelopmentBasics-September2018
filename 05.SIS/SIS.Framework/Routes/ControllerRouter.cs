@@ -61,44 +61,36 @@
 
             object[] actionParameters = this.MapActionParameters(action, request, controller);
 
-            var actionResult = InvokeAction(controller, action, actionParameters);
+            var actionResult = this.InvokeAction(controller, action, actionParameters);
 
             return this.PrepareResponse(actionResult);
         }
 
-        private static IActionResult InvokeAction(Controller controller, MethodInfo action, object[] actionParameters)
+        private IActionResult InvokeAction(Controller controller, MethodInfo action, object[] actionParameters)
         {
             return (IActionResult)action.Invoke(controller, actionParameters);
         }
 
         private object[] MapActionParameters(MethodInfo action, IHttpRequest request, Controller controller)
         {
-            var actionParameteres = action.GetParameters();
+            ParameterInfo[] actionParameterInfo = action.GetParameters();
 
-            object[] mappedActionParameters = new object[actionParameteres.Length];
+            object[] mappedActionParameters = new object[actionParameterInfo.Length];
 
-            for (int i = 0; i < actionParameteres.Length; i++)
+            for (int index = 0; index < actionParameterInfo.Length; index++)
             {
-                var actionParameter = actionParameteres[i];
+                ParameterInfo currentParameterInfo = actionParameterInfo[index];
 
-                if (actionParameter.ParameterType.IsPrimitive ||
-                    actionParameter.ParameterType == typeof(string))
+                if (currentParameterInfo.ParameterType.IsPrimitive || currentParameterInfo.ParameterType == typeof(string))
                 {
-                    var mappedActionParameter = new object();
-                    mappedActionParameter = this.ProcessPrimitiveParameter(actionParameter, request);
-                    if (mappedActionParameter == null)
-                    {
-                        break;
-                    }
+                    mappedActionParameters[index] = ProcessPrimitiveParameter(currentParameterInfo, request);
                 }
                 else
                 {
-                    var bindingModel = this.ProcessesBindingModelParameter(actionParameter, request);
-                    controller.ModelState.IsValid = this.IsValid(bindingModel, actionParameter.ParameterType);
-
-                    mappedActionParameters[i] = bindingModel;
+                    object bindingModel = this.ProcessesBindingModelParameter(currentParameterInfo, request);
+                    controller.ModelState.IsValid = this.IsValid(bindingModel, currentParameterInfo.ParameterType);
+                    mappedActionParameters[index] = bindingModel;
                 }
-
             }
 
             return mappedActionParameters;
@@ -142,15 +134,11 @@
             {
                 try
                 {
-                    var value = this.GetParameterFromRequestData(
-                        request,
-                        bindingModelProperty.Name.ToLower());
+                    var value = this.GetParameterFromRequestData(request, bindingModelProperty.Name);
 
-                    bindingModelProperty.SetValue(
-                        bindingModelInstance,
-                        Convert.ChangeType(value, bindingModelProperty.PropertyType));
+                    bindingModelProperty.SetValue(bindingModelInstance, Convert.ChangeType(value, bindingModelProperty.PropertyType));
                 }
-                catch (Exception)
+                catch
                 {
                     Console.WriteLine(string.Format(PropertyNotMappedMessage, bindingModelProperty.Name));
                 }

@@ -1,38 +1,29 @@
 ﻿namespace SIS.WebServer
 {
-    using Routing;
-    using Results;
-    
     using HTTP.Responses.Contracts;
     using HTTP.Requests.Contracts;
     using HTTP.Requests;
-    using HTTP.Responses;
-    using HTTP.Enums;
     using HTTP.Sessions;
     using HTTP.Cookies;
-    using HTTP.Common;
 
     using System.Net.Sockets;
     using System.Threading.Tasks;
     using System.Text;
     using System;
-    using System.Linq;
-    using System.Reflection;
-    using System.IO;
     using SIS.WebServer.Api.Contracts;
 
     public class ConnectionHandler
     {
         private readonly Socket client;
 
-        private readonly IHttpHandler handler;
+        private readonly IHttpHandlingContext handlersContext;
 
         private const string DirectoryPath = "../../..";
 
-        public ConnectionHandler(Socket client, IHttpHandler handler)
+        public ConnectionHandler(Socket client, IHttpHandlingContext handlersContext)
         {
             this.client = client;
-            this.handler = handler;
+            this.handlersContext = handlersContext;
         }
 
         private void SetResponseSession(IHttpResponse httpResponse, string sessionId)
@@ -110,7 +101,7 @@
             {
                 string sessionId = this.SetRequestSession(httpRequest);
 
-                var httpResponse = this.handler.Handle(httpRequest);
+                var httpResponse = this.handlersContext.Handle(httpRequest);
 
                 this.SetResponseSession(httpResponse, sessionId);
 

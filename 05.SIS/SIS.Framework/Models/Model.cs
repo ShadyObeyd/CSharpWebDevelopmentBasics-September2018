@@ -8,11 +8,6 @@
 
         private IDictionary<string, string> modelErrors;
 
-        public Model()
-        {
-            this.modelErrors = new Dictionary<string, string>();
-        }
-
         public bool? IsValid
         {
             get => this.isValid;

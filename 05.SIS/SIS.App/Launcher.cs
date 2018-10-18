@@ -9,7 +9,9 @@
     {
         public static void Main()
         {
-            Server server = new Server(8000, new ControllerRouter());
+            var handlingContext = new HttpRouteHandlingContext(new ControllerRouter(), new ResourceRouter());
+
+            Server server = new Server(8000, handlingContext);
 
             MvcEngine.Run(server);
         }
