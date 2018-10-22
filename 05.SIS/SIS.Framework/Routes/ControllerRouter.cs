@@ -17,13 +17,20 @@
     using Controllers;
     using ActionResults.Contracts;
     using Attributes.Methods;
-    
+    using Services.Contracts;
 
     public class ControllerRouter : IHttpHandler
     {
         private const string PropertyNotMappedMessage = "The property {0} could not be mapped";
 
         private const string ResultTypeNotSupportedMessage = "Type of result is not supported";
+
+        private readonly IDependencyContainer dependencyContainer;
+
+        public ControllerRouter(IDependencyContainer dependencyContainer)
+        {
+            this.dependencyContainer = dependencyContainer;
+        }
 
         public IHttpResponse Handle(IHttpRequest request)
         {
@@ -43,7 +50,7 @@
                 actionName = requestUrlTokens[1].Capitalize();
             }
 
-            Controller controller = this.GetController(controllerName, request);
+            Controller controller = this.GetController(controllerName);
 
             if (controller == null)
             {
@@ -174,7 +181,7 @@
             return null;
         }
 
-        private Controller GetController(string controllerName, IHttpRequest request)
+        private Controller GetController(string controllerName)
         {
             if (string.IsNullOrWhiteSpace(controllerName))
             {
@@ -186,7 +193,7 @@
                 MvcContext.Get.ControllersSuffix);
 
             var controllerType = Type.GetType(fullyQualifiedControllerName);
-            var controller = (Controller)Activator.CreateInstance(controllerType);
+            var controller = (Controller)this.dependencyContainer.CreateInstance(controllerType);
 
             return controller;
         }

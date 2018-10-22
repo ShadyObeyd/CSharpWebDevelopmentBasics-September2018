@@ -4,12 +4,15 @@
 
     using Framework.Routes;
     using Framework;
+    using Framework.Services;
 
     public class Launcher
     {
         public static void Main()
         {
-            var handlingContext = new HttpRouteHandlingContext(new ControllerRouter(), new ResourceRouter());
+            var dependencyContainer = new DependencyContainer();
+
+            var handlingContext = new HttpRouteHandlingContext(new ControllerRouter(dependencyContainer), new ResourceRouter());
 
             Server server = new Server(8000, handlingContext);
 
