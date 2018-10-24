@@ -6,10 +6,10 @@
     using ActionResults;
     using Views;
     using Utilities;
+    using Models;
+    using Security.Contracts;
 
     using System.Runtime.CompilerServices;
-
-    using Models;
 
     public abstract class Controller
     {
@@ -23,6 +23,8 @@
         public IHttpRequest Request { get; set; }
 
         public ViewModel ViewModel { get; set; }
+
+        public IIdentity Identity => (IIdentity)this.Request.Session.GetParameter("auth");
 
         protected IViewable View([CallerMemberName] string caller = "")
         {
@@ -38,6 +40,16 @@
         protected IRedirectable RedirectToAction(string redirectUrl)
         {
             return new RedirectResult(redirectUrl);
+        }
+
+        protected void SignIn(IIdentity auth)
+        {
+            this.Request.Session.AddParameter("auth", auth);
+        }
+
+        protected void SignOut()
+        {
+            this.Request.Session.ClearParameters();
         }
     }
 }

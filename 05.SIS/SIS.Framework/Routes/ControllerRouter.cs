@@ -18,6 +18,7 @@
     using ActionResults.Contracts;
     using Attributes.Methods;
     using Services.Contracts;
+    using Attributes.Action;
 
     public class ControllerRouter : IHttpHandler
     {
@@ -37,7 +38,7 @@
             string controllerName = string.Empty;
             string actionName = string.Empty;
 
-            if (request.Path == "/")
+            if (request.Path == "/" || request.Path == "/favicon.ico")
             {
                 controllerName = "Home";
                 actionName = "Index";
@@ -70,7 +71,7 @@
 
             var actionResult = this.InvokeAction(controller, action, actionParameters);
 
-            return this.PrepareResponse(actionResult);
+            return this.Authorize(controller, action) ?? this.PrepareResponse(actionResult);
         }
 
         private IActionResult InvokeAction(Controller controller, MethodInfo action, object[] actionParameters)
@@ -250,19 +251,29 @@
 
         private IHttpResponse PrepareResponse(IActionResult actionResult)
         {
-            string invokationResult = actionResult.Invoke();
+            string invokeAtionResult = actionResult.Invoke();
 
             if (actionResult is IViewable)
             {
-                return new HtmlResult(invokationResult, HttpResponseStatusCode.Ok);
+                return new HtmlResult(invokeAtionResult, HttpResponseStatusCode.Ok);
             }
 
             if (actionResult is IRedirectable)
             {
-                return new RedirectResult(invokationResult);
+                return new RedirectResult(invokeAtionResult);
             }
 
             throw new InvalidOperationException(ResultTypeNotSupportedMessage);
+        }
+
+        private IHttpResponse Authorize(Controller controller, MethodInfo action)
+        {
+            if (action.GetCustomAttributes().Where(a => a is AuthorizeAttribute).Cast<AuthorizeAttribute>().Any(a => !a.IsAuthorized(controller.Identity)))
+            {
+                return new UnauthorizedResult();
+            }
+
+            return null;
         }
     }
 }
