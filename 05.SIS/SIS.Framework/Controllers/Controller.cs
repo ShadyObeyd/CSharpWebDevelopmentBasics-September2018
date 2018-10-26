@@ -10,6 +10,7 @@
     using Security.Contracts;
 
     using System.Runtime.CompilerServices;
+    using System.IO;
 
     public abstract class Controller
     {
@@ -17,6 +18,8 @@
         {
             this.ViewModel = new ViewModel();
         }
+
+        private ViewEngine ViewEngine { get; } = new ViewEngine();
 
         public Model ModelState { get; set; } = new Model();
 
@@ -28,13 +31,24 @@
 
         protected IViewable View([CallerMemberName] string caller = "")
         {
-            var controllerName = ControllerUtilities.GetControllerName(this);
+            string controllerName = ControllerUtilities.GetControllerName(this);
 
-            var fullyQualifiedName = ControllerUtilities.GetViewFullQualifiedName(controllerName, caller);
+            string viewContent = null;
 
-            var view = new View(fullyQualifiedName, this.ViewModel.Data);
+            try
+            {
+                viewContent = this.ViewEngine.GetViewContent(controllerName, caller);
+            }
+            catch(FileNotFoundException e)
+            {
+                this.ViewModel.Data["Error"] = e.Message;
 
-            return new ViewResult(view);
+                viewContent = this.ViewEngine.GetErrorContent();
+            }
+
+            string renderedContent = this.ViewEngine.RenderHtml(viewContent, this.ViewModel.Data);
+
+            return new ViewResult(new View(renderedContent));
         }
 
         protected IRedirectable RedirectToAction(string redirectUrl)
