@@ -1,0 +1,41 @@
+﻿@if(User.Role == "Admin")
+{
+    <h4 class="text-panda text-center">Welcome, Administrator @User.Username!</h4>
+}
+@else
+{
+    <h4 class="text-panda text-center">Welcome, @User.Username!</h4>
+}
+<hr class="hr-2 bg-panda text-panda" />
+
+<h5 class="text-panda">Pending</h5>
+@for(int i = 0; i < Model.PendingPackages.Count(); i++)
+{
+    {var package = Model.PendingPackages.ToList()[i]; }
+
+    <div class=" text-panda">@package.Title</div>
+    <div class="button-holder mt-4 d-flex justify-content-center">
+        <a href="/Packages/Details?id=@package.Id" type="submit" class="btn bg-panda text-white">Details</a>
+    </div>
+}
+<h5 class="text-panda text-center">Shipped</h5>
+@for(int i = 0; i < Model.ShippedPackages.Count(); i++)
+{
+    {var package = Model.ShippedPackages.ToList()[i]; }
+
+    <div class=" text-panda">@package.Title</div>
+    <div class="button-holder mt-4 d-flex justify-content-center">
+        <a href="/Packages/Details?id=@package.Id" type="submit" class="btn bg-panda text-white">Details</a>
+    </div>
+}
+<h5 class="text-panda text-right">Delivered</h5>
+@for(int i = 0; i < Model.DeliveredPackages.Count(); i++)
+{
+    {var package = Model.DeliveredPackages.ToList()[i]; }
+
+    <div class=" text-panda">@package.Title</div>
+    <div class="button-holder mt-4 d-flex justify-content-center">
+        <a href="/Packages/Acquire?id=@package.Id" type="submit" class="btn bg-panda text-white">Acquire</a>
+    </div>
+}
+<!--TODO Render View correctly!-->
